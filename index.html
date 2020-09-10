@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Simple Polygon</title>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwAKjYJ2JSuyf6pAWoYid0UsDYMsAB-O8&callback=initMap&libraries=&v=weekly"
+    defer></script>
+  <link rel="stylesheet" type="text/css" href="./style.css" />
+  <script>
+    const depot = {
+      1: {
+        center: { lat: 34.1698052, lng: -118.6060702 },
+        radius: 15000,
+        strokeColor: "#FF0000",
+        fillColor: "#FF0000"
+      },
+      2: {
+        center: { lat: 34.0885505, lng: -118.3446302 },
+        radius: 20000,
+        strokeColor: "#0000FF",
+        fillColor: "#0000FF"
+      },
+      3: {
+        center: { lat: 34.4218479, lng: -119.7034277 },
+        radius: 15000,
+        strokeColor: "#FFFF00",
+        fillColor: "#FFFF00"
+      }
+    };
+
+    const deliveries = [
+      ['1', 34.009615, -118.302586, '1'],
+      ['1', 34.118672, -118.302586, '2'],
+      ['2', 34.1698052, -118.6060702, '3'],
+      ['3', 34.408438, -119.715221, '4'],
+      ['3', 34.444346, -119.741238, '5']
+    ];
+
+    function initMap() {
+      const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 9,
+        center: { lat: 34.052, lng: -118.243 },
+        mapTypeId: "terrain"
+      });
+      setMarkers(map); 
+
+      
+
+      for (const city in depot) {
+        const cityCircle = new google.maps.Circle({
+          strokeColor: depot[city].strokeColor,
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: depot[city].fillColor,
+          fillOpacity: 0.35,
+          map,
+          center: depot[city].center,
+          radius: Math.sqrt(depot[city].radius) * 100
+        });
+      }
+    }
+
+    function setMarkers(map) {
+
+      const shape = {
+        coords: [1, 1, 1, 20, 18, 20, 18, 1],
+        type: "poly"
+      };
+
+      for (let i = 0; i < deliveries.length; i++) {
+        const delivery = deliveries[i];
+        const infowindow = new google.maps.InfoWindow({
+    content: delivery[3]
+  });
+        const marker = new google.maps.Marker({
+          position: { lat: delivery[1], lng: delivery[2] },
+          map,
+          shape: shape,
+          title: delivery[0]
+        });
+      marker.addListener("click", () => {
+    infowindow.open(map, marker);
+  });
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div id="map"></div>
+</body>
+
+</html>
